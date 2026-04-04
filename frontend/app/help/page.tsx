@@ -2,13 +2,22 @@ import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
 
 const faqs = [
-  { 
-    q: 'How do I connect a new ad platform?', 
-    a: "Go to Integrations → click Connect next to the platform. You'll be redirected to authenticate via OAuth." 
+  {
+    q: 'How do I connect a new ad platform?',
+    a: "Go to Integrations → click Connect next to the platform. You'll be redirected to authenticate via OAuth."
   },
-  { q: 'What does ROAS mean?', a: 'Return on Ad Spend (ROAS) = Revenue generated ÷ Ad spend. A ROAS of 4× means $4 earned for every $1 spent.' },
-  { q: 'How often is data refreshed?', a: 'Connected platforms sync every 2–4 hours. You can trigger a manual sync from the Integrations page.' },
-  { q: 'Can I export reports to PDF?', a: 'Yes — go to Reports, select or generate a report, and click the ⬇ download button.' },
+  {
+    q: 'What does ROAS mean?',
+    a: 'Return on Ad Spend (ROAS) = Revenue generated ÷ Ad spend. A ROAS of 4× means $4 earned for every $1 spent.'
+  },
+  {
+    q: 'How often is data refreshed?',
+    a: 'Connected platforms sync every 2–4 hours. You can trigger a manual sync from the Integrations page.'
+  },
+  {
+    q: 'Can I export reports to PDF?',
+    a: 'Yes — go to Reports, select or generate a report, and click the download button.'
+  },
 ];
 
 const guides = [
