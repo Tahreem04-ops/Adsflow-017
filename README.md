@@ -84,3 +84,5 @@ All design tokens are CSS variables in `globals.css`:
 - Grid layouts stack to single column below 768px
 - Tables become horizontally scrollable
 - All touch targets meet minimum size requirements
+- <img width="1356" height="730" alt="image" src="https://github.com/user-attachments/assets/ca0af3c0-784b-4c13-b7c7-7e180cbeeceb" />
+
