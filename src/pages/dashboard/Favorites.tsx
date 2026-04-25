@@ -32,7 +32,27 @@ export default function Favorites() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, [user]);
+  useEffect(() => {
+    load();
+    if (!user) return;
+
+    // Real-time subscription for favorites
+    const channel = supabase
+      .channel(`favorites:${user.id}`)
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "favorites", filter: `user_id=eq.${user.id}` }, (payload) => {
+        // Reload favorites when a new favorite is added
+        load();
+      })
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "favorites", filter: `user_id=eq.${user.id}` }, (payload) => {
+        // Remove from local state when deleted
+        setAds((a) => a.filter((x) => x.id !== payload.old.ad_id));
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   async function unfav(id: string) {
     if (!user) return;

@@ -110,9 +110,26 @@ export default function SearchPage() {
 
   useEffect(() => {
     if (!user) return;
+    
+    // Load initial favorites
     supabase.from("favorites").select("ad_id").eq("user_id", user.id).then(({ data }) => {
       setFavIds(new Set((data ?? []).map((f) => f.ad_id)));
     });
+
+    // Real-time subscription for favorites
+    const channel = supabase
+      .channel(`favorites:search:${user.id}`)
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "favorites", filter: `user_id=eq.${user.id}` }, (payload) => {
+        setFavIds((s) => new Set(s).add(payload.new.ad_id));
+      })
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "favorites", filter: `user_id=eq.${user.id}` }, (payload) => {
+        setFavIds((s) => { const n = new Set(s); n.delete(payload.old.ad_id); return n; });
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   function applyFilters() {

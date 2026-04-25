@@ -1,0 +1,27 @@
+-- Single-line SQL to avoid formatting issues
+CREATE TABLE IF NOT EXISTS public.favorites (id uuid primary key default gen_random_uuid(), user_id uuid not null references auth.users(id) on delete cascade, ad_id uuid not null references public.ads(id) on delete cascade, created_at timestamptz not null default now(), unique(user_id, ad_id));
+ALTER TABLE public.favorites ENABLE ROW LEVEL SECURITY;
+CREATE INDEX IF NOT EXISTS idx_favorites_user ON public.favorites(user_id);
+CREATE INDEX IF NOT EXISTS idx_favorites_ad ON public.favorites(ad_id);
+DROP POLICY IF EXISTS "Users can view their own favorites" ON public.favorites;
+DROP POLICY IF EXISTS "Users can add their own favorites" ON public.favorites;
+DROP POLICY IF EXISTS "Users can delete their own favorites" ON public.favorites;
+CREATE POLICY "Users can view their own favorites" ON public.favorites FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can add their own favorites" ON public.favorites FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete their own favorites" ON public.favorites FOR DELETE USING (auth.uid() = user_id);
+CREATE TABLE IF NOT EXISTS public.messages (id uuid primary key default gen_random_uuid(), sender_id uuid not null references auth.users(id) on delete cascade, recipient_id uuid not null references auth.users(id) on delete cascade, ad_id uuid references public.ads(id) on delete set null, content text not null, is_read boolean not null default false, created_at timestamptz not null default now(), updated_at timestamptz not null default now());
+ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+CREATE INDEX IF NOT EXISTS idx_messages_sender ON public.messages(sender_id);
+CREATE INDEX IF NOT EXISTS idx_messages_recipient ON public.messages(recipient_id);
+CREATE INDEX IF NOT EXISTS idx_messages_conversation ON public.messages(sender_id, recipient_id);
+CREATE INDEX IF NOT EXISTS idx_messages_created ON public.messages(created_at DESC);
+DROP POLICY IF EXISTS "Users can view their messages" ON public.messages;
+DROP POLICY IF EXISTS "Users can send messages" ON public.messages;
+DROP POLICY IF EXISTS "Users can update message read status" ON public.messages;
+CREATE POLICY "Users can view their messages" ON public.messages FOR SELECT USING (auth.uid() = sender_id OR auth.uid() = recipient_id);
+CREATE POLICY "Users can send messages" ON public.messages FOR INSERT WITH CHECK (auth.uid() = sender_id);
+CREATE POLICY "Users can update message read status" ON public.messages FOR UPDATE USING (auth.uid() = recipient_id) WITH CHECK (auth.uid() = recipient_id);
+DROP POLICY IF EXISTS "Sellers can update their own ads" ON public.ads;
+DROP POLICY IF EXISTS "Sellers can delete their own ads" ON public.ads;
+CREATE POLICY "Sellers can update their own ads" ON public.ads FOR UPDATE USING (seller_id = auth.uid()) WITH CHECK (seller_id = auth.uid());
+CREATE POLICY "Sellers can delete their own ads" ON public.ads FOR DELETE USING (seller_id = auth.uid());

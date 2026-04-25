@@ -39,7 +39,7 @@ export default function PostAdPage() {
   const [submitting, setSubmitting] = useState(false);
 
   if (!authLoading && !user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login?role=seller" replace />;
   }
 
   function onPickFiles(e: React.ChangeEvent<HTMLInputElement>) {

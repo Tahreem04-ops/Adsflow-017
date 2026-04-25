@@ -163,6 +163,23 @@ export default function AdDetailPage() {
       }
 
       setLoading(false);
+
+      // Real-time subscription for favorite state
+      if (user) {
+        const channel = supabase
+          .channel(`favorites:detail:${id}:${user.id}`)
+          .on("postgres_changes", { event: "INSERT", schema: "public", table: "favorites", filter: `user_id=eq.${user.id}` }, (payload) => {
+            if (payload.new.ad_id === id) setIsFav(true);
+          })
+          .on("postgres_changes", { event: "DELETE", schema: "public", table: "favorites", filter: `user_id=eq.${user.id}` }, (payload) => {
+            if (payload.old.ad_id === id) setIsFav(false);
+          })
+          .subscribe();
+
+        return () => {
+          supabase.removeChannel(channel);
+        };
+      }
     })();
   }, [id, user]);
 

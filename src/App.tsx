@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "./components/ui/sonner";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
+import { useTheme } from "./hooks/useTheme";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import CategoriesPage from "./pages/Categories.tsx";
@@ -21,11 +22,13 @@ import Profile from "./pages/dashboard/Profile.tsx";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+function AppContent() {
+  const { theme } = useTheme();
+
+  return (
     <TooltipProvider>
       <Toaster />
-      <Sonner position="top-center" theme="dark" />
+      <Sonner position="top-center" theme={theme} />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
@@ -48,6 +51,12 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+  );
+}
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <AppContent />
   </QueryClientProvider>
 );
 

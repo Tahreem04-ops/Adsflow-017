@@ -1,8 +1,9 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Search, User as UserIcon, Heart, MessageCircle, Plus, LogOut, LayoutDashboard, Menu } from "lucide-react";
+import { Search, User as UserIcon, Heart, MessageCircle, Plus, LogOut, LayoutDashboard, Menu, Moon, Sun } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useAuth } from "../../hooks/useAuth";
+import { useTheme } from "../../hooks/useTheme";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +21,7 @@ import { useState } from "react";
 
 export function Header() {
   const { user, roles, signOut, isAdmin, isSuper, isDemo } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -111,7 +113,15 @@ export function Header() {
 
         <div className="flex-1" />
 
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
           {user ? (
             <>
               <Button asChild variant="ghost" size="icon" aria-label="Favorites">
@@ -171,6 +181,14 @@ export function Header() {
 
         {/* Mobile */}
         <div className="md:hidden flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
           {user && (
             <Button asChild variant="hero" size="sm">
               <Link to="/post-ad"><Plus className="h-4 w-4" /></Link>
