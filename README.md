@@ -8,7 +8,7 @@ A modern, responsive online marketplace web application where users can browse, 
 
 
 ## 🌐 Live Demo
-https://midterms-nu.vercel.app/
+https://adsflow-017.vercel.app/
 
 
 
@@ -177,13 +177,12 @@ root/
 - Imported into Vercel  
 - Deployed successfully  
 
-Live URL: https://midterms-nu.vercel.app/
+Live URL: https://adsflow-017.vercel.app/
 
 
 
 ## 👩‍💻 Author
-
-GitHub: @nayab376  
+Name:Tahreem   
 Project: AdFlow Pro  
 
 
