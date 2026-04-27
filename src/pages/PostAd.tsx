@@ -25,7 +25,7 @@ const schema = z.object({
 });
 
 export default function PostAdPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, isSeller } = useAuth();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -40,6 +40,11 @@ export default function PostAdPage() {
 
   if (!authLoading && !user) {
     return <Navigate to="/login?role=seller" replace />;
+  }
+
+  if (!authLoading && user && !isSeller) {
+    toast.error("Only sellers can post ads. Please sign up as a seller.");
+    return <Navigate to="/" replace />;
   }
 
   function onPickFiles(e: React.ChangeEvent<HTMLInputElement>) {

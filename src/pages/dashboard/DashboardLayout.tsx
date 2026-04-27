@@ -3,18 +3,20 @@ import { LayoutDashboard, Package, Plus, MessageCircle, Heart, User as UserIcon 
 import { PageShell } from "../../components/layout/PageShell";
 import { useAuth } from "../../hooks/useAuth";
 
-const items = [
+const defaultItems = [
   { to: "/dashboard", label: "Overview", icon: LayoutDashboard, end: true },
   { to: "/dashboard/ads", label: "My Ads", icon: Package },
-  { to: "/post-ad", label: "Post New Ad", icon: Plus },
+  { to: "/post-ad", label: "Post New Ad", icon: Plus, sellerOnly: true },
   { to: "/dashboard/messages", label: "Messages", icon: MessageCircle },
   { to: "/dashboard/favorites", label: "Favorites", icon: Heart },
   { to: "/dashboard/profile", label: "Profile", icon: UserIcon },
 ];
 
 export default function DashboardLayout() {
-  const { user, loading } = useAuth();
+  const { user, loading, isSeller } = useAuth();
   if (!loading && !user) return <Navigate to="/login" replace />;
+
+  const items = defaultItems.filter(item => !item.sellerOnly || isSeller);
 
   return (
     <PageShell>

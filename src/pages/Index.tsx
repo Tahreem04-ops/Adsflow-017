@@ -27,7 +27,7 @@ function mapDemo(d: typeof DEMO_ADS[number], featured = false): AdCardData {
 }
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const { user, isSeller } = useAuth();
   const [featured, setFeatured] = useState<AdCardData[]>([]);
   const [latest, setLatest] = useState<AdCardData[]>([]);
   const [favIds, setFavIds] = useState<Set<string>>(new Set());
@@ -205,9 +205,19 @@ export default function HomePage() {
             Reach thousands of buyers in your city. Post your first ad in under a minute.
           </p>
           <div className="mt-6">
-            <Button asChild variant="hero" size="xl">
-              <Link to="/post-ad">Post an ad now</Link>
-            </Button>
+            {user && isSeller ? (
+              <Button asChild variant="hero" size="xl">
+                <Link to="/post-ad">Post an ad now</Link>
+              </Button>
+            ) : user ? (
+              <Button disabled variant="hero" size="xl">
+                Only sellers can post ads
+              </Button>
+            ) : (
+              <Button asChild variant="hero" size="xl">
+                <Link to="/signup?role=seller">Sign up as seller to post</Link>
+              </Button>
+            )}
           </div>
         </div>
       </section>

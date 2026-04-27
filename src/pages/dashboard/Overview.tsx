@@ -7,7 +7,7 @@ import { supabase } from "../../integrations/supabase/client";
 import { loadDemoAds } from "@/lib/auth";
 
 export default function DashboardOverview() {
-  const { user, roles } = useAuth();
+  const { user, roles, isSeller } = useAuth();
   const [stats, setStats] = useState({ ads: 0, views: 0, favorites: 0, messages: 0 });
 
   useEffect(() => {
@@ -42,7 +42,9 @@ export default function DashboardOverview() {
             <p className="text-xs text-muted-foreground mt-1">Role: {roles[0]}</p>
           )}
         </div>
-        <Button asChild variant="hero"><Link to="/post-ad"><Plus className="h-4 w-4" /> Post new ad</Link></Button>
+        {isSeller && (
+          <Button asChild variant="hero"><Link to="/post-ad"><Plus className="h-4 w-4" /> Post new ad</Link></Button>
+        )}
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

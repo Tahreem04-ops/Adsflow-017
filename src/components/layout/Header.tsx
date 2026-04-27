@@ -20,7 +20,7 @@ import {
 import { useState } from "react";
 
 export function Header() {
-  const { user, roles, signOut, isAdmin, isSuper, isDemo } = useAuth();
+  const { user, roles, signOut, isAdmin, isSuper, isDemo, isSeller } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -130,9 +130,11 @@ export function Header() {
               <Button asChild variant="ghost" size="icon" aria-label="Messages">
                 <Link to="/dashboard/messages"><MessageCircle className="h-5 w-5" /></Link>
               </Button>
-              <Button asChild variant="hero" size="default">
-                <Link to="/post-ad"><Plus className="h-4 w-4" /> Post Ad</Link>
-              </Button>
+              {isSeller && (
+                <Button asChild variant="hero" size="default">
+                  <Link to="/post-ad"><Plus className="h-4 w-4" /> Post Ad</Link>
+                </Button>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="icon" aria-label="Account">
@@ -172,9 +174,6 @@ export function Header() {
               <Button asChild variant="ghost">
                 <Link to="/login">Login</Link>
               </Button>
-              <Button asChild variant="hero">
-                <Link to="/post-ad"><Plus className="h-4 w-4" /> Post Ad</Link>
-              </Button>
             </>
           )}
         </div>
@@ -189,7 +188,7 @@ export function Header() {
           >
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
-          {user && (
+          {user && isSeller && (
             <Button asChild variant="hero" size="sm">
               <Link to="/post-ad"><Plus className="h-4 w-4" /></Link>
             </Button>
@@ -214,7 +213,9 @@ export function Header() {
                           </Link>
                         </Button>
                       )}
-                      <Button asChild variant="hero"><Link to="/post-ad" onClick={() => setMobileOpen(false)}><Plus className="h-4 w-4" /> Post Ad</Link></Button>
+                      {isSeller && (
+                        <Button asChild variant="hero"><Link to="/post-ad" onClick={() => setMobileOpen(false)}><Plus className="h-4 w-4" /> Post Ad</Link></Button>
+                      )}
                       <Button variant="ghost" onClick={() => { signOut(); setMobileOpen(false); }} className="text-destructive justify-start">
                         <LogOut className="h-4 w-4" /> Sign out
                       </Button>
@@ -222,7 +223,6 @@ export function Header() {
                   ) : (
                     <>
                       <Button asChild variant="hero"><Link to="/login" onClick={() => setMobileOpen(false)}>Login</Link></Button>
-                      <Button asChild variant="outline"><Link to="/post-ad" onClick={() => setMobileOpen(false)}>Post Ad</Link></Button>
                     </>
                   )}
                 </div>

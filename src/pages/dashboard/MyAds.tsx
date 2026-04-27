@@ -9,7 +9,7 @@ import { formatPrice } from "../../lib/marketplace";
 import { toast } from "sonner";
 
 export default function MyAds() {
-  const { user } = useAuth();
+  const { user, isSeller } = useAuth();
   const [ads, setAds] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -60,7 +60,9 @@ export default function MyAds() {
     <div className="space-y-5">
       <header className="flex items-center justify-between">
         <h1 className="font-display text-2xl font-bold">My Ads</h1>
-        <Button asChild variant="hero" size="sm"><Link to="/post-ad"><Plus className="h-4 w-4" /> New ad</Link></Button>
+        {isSeller && (
+          <Button asChild variant="hero" size="sm"><Link to="/post-ad"><Plus className="h-4 w-4" /> New ad</Link></Button>
+        )}
       </header>
 
       {loading ? (
@@ -68,7 +70,9 @@ export default function MyAds() {
       ) : ads.length === 0 ? (
         <div className="card-elevated rounded-2xl p-10 text-center">
           <p className="text-muted-foreground mb-4">You haven't posted any ads yet.</p>
-          <Button asChild variant="hero"><Link to="/post-ad">Post your first ad</Link></Button>
+          {isSeller && (
+            <Button asChild variant="hero"><Link to="/post-ad">Post your first ad</Link></Button>
+          )}
         </div>
       ) : (
         <div className="space-y-3">
