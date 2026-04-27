@@ -43,9 +43,16 @@ export default function AdDetailPage() {
     (async () => {
       setLoading(true);
 
-      // ── Favorite state from localStorage ──
-      const storedFavs: string[] = JSON.parse(localStorage.getItem("fav_ids") || "[]");
-      setIsFav(storedFavs.includes(id));
+      // ── Check if favorited in Supabase ──
+      if (user && !id.startsWith("demo-")) {
+        const { data } = await supabase
+          .from("favorites")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("ad_id", id)
+          .maybeSingle();
+        setIsFav(!!data);
+      }
 
       // ── Check localStorage for user-created demo ads first ──
       const localAds = JSON.parse(localStorage.getItem("demo_ads") || "[]");
@@ -197,22 +204,35 @@ export default function AdDetailPage() {
     })();
   }, [id, user]);
 
-  // ── Toggle Favorite → localStorage ──
-  function toggleFav() {
+  // ── Toggle Favorite → Supabase ──
+  async function toggleFav() {
     if (!ad) return;
 
-    const stored: string[] = JSON.parse(localStorage.getItem("fav_ids") || "[]");
+    // Demo ads cannot be favorited
+    if (ad.is_demo) {
+      toast.info("Demo ads can't be favorited — post a real ad first");
+      return;
+    }
 
-    if (isFav) {
-      const updated = stored.filter((x) => x !== ad.id);
-      localStorage.setItem("fav_ids", JSON.stringify(updated));
-      setIsFav(false);
-      toast.info("Favorites se hata diya");
-    } else {
-      stored.push(ad.id);
-      localStorage.setItem("fav_ids", JSON.stringify(stored));
-      setIsFav(true);
-      toast.success("Favorites mein save ho gaya!");
+    if (!user) {
+      toast.error("Please log in to save favorites");
+      return;
+    }
+
+    try {
+      if (isFav) {
+        // Remove from Supabase
+        await supabase.from("favorites").delete().eq("user_id", user.id).eq("ad_id", ad.id);
+        setIsFav(false);
+        toast.info("Removed from favorites");
+      } else {
+        // Add to Supabase
+        await supabase.from("favorites").insert({ user_id: user.id, ad_id: ad.id });
+        setIsFav(true);
+        toast.success("Added to favorites");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Error updating favorite");
     }
   }
 
